@@ -26,10 +26,9 @@
 	root * public/
 	encode zstd br gzip
 
-	# Symfony front-controller: every miss in public/ falls back to index.php.
-	php_server {
-		try_files {path} index.php?{query}
-	}
+	# In FrankenPHP worker mode the Symfony kernel is kept in memory and handles
+	# all routing itself — no try_files rewrite needed (it would shadow the worker).
+	php_server
 
 	header {
 		X-Frame-Options       "SAMEORIGIN"
