@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ItemController
 {
+    #[Route('/', methods: ['GET'])]
     #[Route('/items', methods: ['GET'])]
     public function list(EntityManagerInterface $em): JsonResponse
     {
