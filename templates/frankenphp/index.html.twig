@@ -1,0 +1,177 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FrankenPHP — config{% endblock %}
+
+{% block stylesheets %}
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f8f8f7;
+    --surface: #ffffff;
+    --border: #e5e5e3;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #0d7a52;
+    --accent-soft: #e8f5ee;
+    --warn: #b07700;
+    --warn-soft: #fff4e0;
+    --bad: #b00020;
+    --code: #0f111a;
+    --code-text: #f5f5f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0e10; --surface: #18181b; --border: #2a2a2d;
+      --text: #e7e7e9; --muted: #9b9ba0; --accent: #45d49b; --accent-soft: #0c2a1e;
+      --warn: #f0b34a; --warn-soft: #2a1f0c; --bad: #e15378;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg); color: var(--text); margin: 0;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  h1 { font-size: 1.75rem; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+  .lead { color: var(--muted); margin: 0 0 2rem; }
+  .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1rem 1.25rem; overflow: hidden;
+  }
+  .card h2 {
+    font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); margin: 0 0 0.75rem;
+  }
+  dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; font-size: 0.9rem; }
+  dt { color: var(--muted); }
+  dd { margin: 0; font-variant-numeric: tabular-nums; word-break: break-all; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.78rem; font-weight: 500;
+  }
+  .pill.ok { background: var(--accent-soft); color: var(--accent); }
+  .pill.no { background: var(--warn-soft); color: var(--warn); }
+  .pill.bad { background: #fde7ec; color: var(--bad); }
+  .header-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; }
+  pre {
+    background: var(--code); color: var(--code-text); padding: 0.85rem 1rem; border-radius: 8px;
+    overflow-x: auto; margin: 0;
+  }
+  .ext-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.4rem; }
+  .ext { font-size: 0.78rem; padding: 0.25rem 0.55rem; border-radius: 6px; border: 1px solid var(--border); }
+  .ext.on { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .ext.off { color: var(--muted); }
+  .footer-note { margin-top: 2rem; font-size: 0.78rem; color: var(--muted); }
+  .footer-note a { color: var(--accent); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="wrap">
+  <h1>FrankenPHP runtime</h1>
+  <p class="lead">Configuration courante du serveur, exposée pour vérifier que le worker mode tourne et que les extensions critiques sont chargées.</p>
+
+  <div class="header-pills">
+    {% if info.frankenphp.detected %}
+      <span class="pill ok">● FrankenPHP {{ info.frankenphp.version ?: 'detected' }}</span>
+    {% else %}
+      <span class="pill bad">● FrankenPHP not detected (SAPI: {{ info.frankenphp.sapi }})</span>
+    {% endif %}
+
+    {% if info.frankenphp.worker_mode %}
+      <span class="pill ok">⚡ worker mode</span>
+    {% else %}
+      <span class="pill no">classic mode</span>
+    {% endif %}
+
+    {% if info.php.opcache_enabled %}
+      <span class="pill ok">opcache + JIT</span>
+    {% else %}
+      <span class="pill no">opcache off</span>
+    {% endif %}
+
+    <span class="pill ok">PHP {{ info.php.version }}</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>FrankenPHP</h2>
+      <dl>
+        <dt>version</dt><dd>{{ info.frankenphp.version ?: '—' }}</dd>
+        <dt>SAPI</dt><dd><code>{{ info.frankenphp.sapi }}</code></dd>
+        <dt>worker mode</dt><dd>{{ info.frankenphp.worker_mode ? 'on' : 'off' }}</dd>
+        {% if info.frankenphp.worker_script %}
+        <dt>worker script</dt><dd><code>{{ info.frankenphp.worker_script }}</code></dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>Request</h2>
+      <dl>
+        <dt>protocol</dt><dd>{{ info.request.http_version }}</dd>
+        <dt>scheme</dt><dd>{{ info.request.scheme }}</dd>
+        <dt>server</dt><dd><code>{{ info.request.server_software ?: '—' }}</code></dd>
+        <dt>host</dt><dd>{{ info.request.host }}</dd>
+        <dt>remote IP</dt><dd>{{ info.request.remote_ip ?: '—' }}</dd>
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>PHP / opcache</h2>
+      <dl>
+        <dt>version</dt><dd>{{ info.php.version }}</dd>
+        <dt>memory_limit</dt><dd>{{ info.php.memory_limit }}</dd>
+        <dt>opcache.jit</dt><dd>{{ info.php.opcache_jit ?: '—' }}</dd>
+        <dt>jit buffer</dt><dd>{{ info.php.opcache_jit_buffer_size ?: '—' }}</dd>
+        <dt>opcache mem</dt><dd>{{ info.php.opcache_memory_consumption ?: '—' }} MB</dd>
+        <dt>validate ts</dt><dd>{{ info.php.opcache_validate_timestamps ? 'on (dev)' : 'off (prod)' }}</dd>
+        {% if info.php.opcache_runtime %}
+        <dt>cached scripts</dt><dd>{{ info.php.opcache_runtime.cached_scripts ?? '—' }}</dd>
+        <dt>hit rate</dt><dd>{{ info.php.opcache_runtime.hit_rate is not null ? info.php.opcache_runtime.hit_rate ~ ' %' : '—' }}</dd>
+        <dt>used / free</dt><dd>{{ info.php.opcache_runtime.used_mb }} / {{ info.php.opcache_runtime.free_mb }} MB</dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>Symfony</h2>
+      <dl>
+        <dt>environment</dt><dd>{{ info.symfony.env }}</dd>
+        <dt>debug</dt><dd>{{ info.symfony.debug ? 'true' : 'false' }}</dd>
+        <dt>project_dir</dt><dd><code>{{ info.symfony.project_dir }}</code></dd>
+      </dl>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>Extensions</h2>
+      <div class="ext-grid">
+        {% for name, on in info.extensions %}
+          <span class="ext {{ on ? 'on' : 'off' }}">
+            {{ on ? '✓' : '·' }} {{ name }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>Environment</h2>
+      <dl>
+        {% for k, v in info.env %}
+          <dt><code>{{ k }}</code></dt>
+          <dd>{{ v ?: '—' }}</dd>
+        {% endfor %}
+      </dl>
+    </div>
+  </div>
+
+  <p class="footer-note">
+    JSON dump : <a href="{{ path('frankenphp_api') }}"><code>/api/frankenphp</code></a>
+    · build : <code>{{ info.env.PLOYDOK_BUILD_ID ?: 'unknown' }}</code>
+  </p>
+</div>
+{% endblock %}
