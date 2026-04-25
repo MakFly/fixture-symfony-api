@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Items — smoke-symfony-mono{% endblock %}
+
+{% block stylesheets %}
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.5rem; }
+  ul { padding-left: 1.5rem; }
+  li { margin: 0.25rem 0; }
+  form { display: flex; gap: 0.5rem; margin: 1rem 0; }
+  input[type=text] { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+  button { padding: 0.5rem 1rem; background: #2563eb; color: white; border: 0; border-radius: 4px; cursor: pointer; }
+  .empty { color: #666; font-style: italic; }
+  .meta { font-size: 0.8rem; color: #888; margin-top: 2rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>smoke-symfony-mono · items</h1>
+
+<form method="post" action="{{ path('item_create') }}">
+  <input type="text" name="name" placeholder="Nouvel item…" required maxlength="255">
+  <button type="submit">Ajouter</button>
+</form>
+
+{% if items|length == 0 %}
+  <p class="empty">Aucun item. Ajoute-en un.</p>
+{% else %}
+  <ul>
+    {% for item in items %}
+      <li><strong>#{{ item.id }}</strong> — {{ item.name }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<p class="meta">build: {{ buildId }} · {{ items|length }} item(s)</p>
+{% endblock %}
