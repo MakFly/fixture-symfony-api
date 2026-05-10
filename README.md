@@ -3,3 +3,4 @@
 <!-- post-merge bytea fix 2026-05-10T14:38:15Z -->
 <!-- post-hotfix 2026-05-10T14:52:20Z -->
 <!-- payload_raw skip 2026-05-10T15:02:52Z -->
+<!-- jsonb stringify 2026-05-10T15:08:22Z -->
