@@ -17,7 +17,18 @@
         <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
-    <body>
+    <body style="margin:0;">
+        <nav style="background:#0f172a;color:#fff;padding:0.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;font-family:system-ui,sans-serif;">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="font-size:1.25rem;">⚫️</span>
+                <strong style="font-size:1rem;letter-spacing:0.02em;">smoke-symfony-mono</strong>
+            </div>
+            <div style="display:flex;gap:1.25rem;font-size:0.875rem;align-items:center;">
+                <a href="{{ path('home') }}" style="color:#cbd5e1;text-decoration:none;">Items</a>
+                <a href="https://github.com/MakFly/fixture-symfony-api" target="_blank" rel="noopener" style="color:#cbd5e1;text-decoration:none;">GitHub</a>
+                <span style="color:#64748b;font-size:0.75rem;">deployed via Ploydok</span>
+            </div>
+        </nav>
         {% block body %}{% endblock %}
     </body>
 </html>
